@@ -1,18 +1,27 @@
-const { registerValidator, loginValidator } = require("../validators/user.validator");
-
+const {
+  registerValidator,
+  loginValidator,
+} = require("../validators/user.validator");
 
 const registerUserMiddleware = (req, res, next) => {
-    const {error} = registerValidator.validate(req.body);
+  const { error } = registerValidator.validate(req.body);
 
-    if(error){
-        res.status(400).json({message: error.details[0].message})
-    }
-    next();
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+  }
+  next();
+};
 
-}
+const loginUserMiddleware = (req, res, next) => {
+  const { error } = loginValidator.validate(req.body);
 
+  if (error) {
+    res.status(400).json({ message: error.details[0].message });
+  }
+  next();
+};
 
 module.exports = {
-    registerUserMiddleware
-}
-    
+  registerUserMiddleware,
+  loginUserMiddleware,
+};
