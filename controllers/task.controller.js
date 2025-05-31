@@ -26,4 +26,17 @@ const getAllTasks = async (req, res) => {
   }
 };
 
-module.exports = { addTask, getAllTasks };
+const getTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const task = await Task.find({
+      $and: [{ ownedBy: req.user.id }, { _id: id }],
+    });
+    res.status(200).json({ message: "Task loaded successfully", data: task });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { addTask, getAllTasks, getTask };
