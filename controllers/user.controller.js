@@ -20,14 +20,41 @@ const registerUser = async (req, res) => {
         const newUser = await User.create({
             username,
             email,
-            hashedPassword
+            password:hashedPassword
         })
 
-        const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET)
+        const token = jwt.sign({user: newUser}, process.env.JWT_SECRET)
 
         res.status(201).json({message: "User created successfully" , token})
     } catch (error) {
         console.log(error)
+        res.status(500).json({message: "Internal Server Error"})
+    }
+}
+
+
+const loginUser = async(req, res) => {
+    try {
+
+        const { email, password } = req.body;
+
+        const user = await User.findOne({email})
+
+        if(!user){
+            return res.status(401).json({message: "Invalid credentials"})
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password)
+
+        if(!isPasswordValid){
+            return res.status(401).json({message: "Invalid credentials"})
+        }
+
+        const token = jwt.sign({user: user}, process.env.JWT_SECRET)
+
+        res.status(200).json({message: "Login successful", token, data: user})
+        
+    } catch (error) {
         res.status(500).json({message: "Internal Server Error"})
     }
 }
@@ -76,10 +103,33 @@ const deleteUser = async (req, res) => {
 }
 
 
+const updateUser = async(req, res) => {
+    try {
+
+        const { id } = req.params;
+
+        const { username, email, role } = req.body;
+
+        const user = await User.findByIdAndUpdate(id, { username, email, role }, { new: true })
+
+        if(!user){
+            return res.status(404).json({message: "User not found"})
+        }
+
+        res.status(200).json({message: "User updated successfully", data: user})
+        
+    } catch (error) {
+        res.status(500).json({message: "Internal Server Error"})
+    }
+}
+
+
 
 module.exports = {
     registerUser,
     getAlUsers,
     getUser,
-    deleteUser
+    deleteUser,
+    loginUser,
+    updateUser
 }

@@ -1,8 +1,7 @@
 const express = require("express");
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/user.route");
-
-
+const projectRoutes = require("./routes/project.route");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
@@ -11,6 +10,7 @@ const app = express();
 app.use(express.json());
 
 app.use("/api/users", userRoutes)
+app.use("/api/projects", projectRoutes)
 // app.use("/api/tasks", )
 
 app.get('/', (req, res) => {

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const { type } = require("os");
+
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -13,7 +13,10 @@ const userSchema = new mongoose.Schema({
         unique:true,
         
     },
-    password: String,
+    password: {
+        type:String,
+        required:true
+    },
     role: {
         type:String,
         enum:["user", "admin"],

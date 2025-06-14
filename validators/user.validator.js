@@ -3,7 +3,7 @@ const Joi = require("joi");
 const  registerValidator = Joi.object({
     username: Joi.string().required(),
     email: Joi.string().required().email(),
-    password: Joi.string().required(),
+    password: Joi.string().required()
 })
 
 const loginValidator = Joi.object({
