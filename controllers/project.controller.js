@@ -16,7 +16,11 @@ const createProject = async(req, res) => {
             return res.status(400).json({message: "Failed to create project"})
         }
 
-        res.status(201).json({message: "Project created successfully", data: project})
+        const populatedProject = await Project.findById(project._id)
+            .populate("createdBy", "username email")
+            .populate("members", "username email")
+
+        res.status(201).json({message: "Project created successfully", data: populatedProject})
         
         
     } catch (error) {
@@ -39,9 +43,11 @@ const updateProject = async(req, res) => {
         }
      
         const project = await Project.findByIdAndUpdate(id, updateData, { new:true})
+            .populate("createdBy", "username email")
+            .populate("members", "username email")
 
         if(!project){
-            return res.status(400).json({message: "Project not found"})
+            return res.status(404).json({message: "Project not found"})
         }
         res.status(200).json({message: "Project updated successfully", data: project})
 
@@ -60,10 +66,13 @@ const updateProject = async(req, res) => {
 const GetProjects = async(req, res) => {
     try {
 
-        const projects = await Project.find({}).populate("createdBy")
+        const projects = await Project.find({})
+            .populate("createdBy", "username email")
+            .populate("members", "username email")
+            .sort({ createdAt: -1 })
 
-        if(!projects){
-            return res.status(400).json({message: "No projects found"})
+        if(!projects || projects.length === 0){
+            return res.status(404).json({message: "No projects found"})
         }
 
         res.status(200).json({message: "Projects fetched successfully", data: projects})
@@ -80,10 +89,12 @@ const getProjectById = async(req, res) => {
 
         const { id } = req.params
 
-        const project = await Project.findById(id).populate("createdBy")
+        const project = await Project.findById(id)
+            .populate("createdBy", "username email")
+            .populate("members", "username email")
 
         if(!project){
-            return res.status(400).json({message: "Project not found"})
+            return res.status(404).json({message: "Project not found"})
         }
 
         res.status(200).json({message: "Project fetched successfully", data: project})
@@ -103,7 +114,7 @@ const deleteProject = async(req, res) => {
         const project = await Project.findByIdAndDelete(id)
 
         if(!project){
-            return res.status(400).json({message: "Project not found"})
+            return res.status(404).json({message: "Project not found"})
         }
 
         res.status(200).json({message: "Project deleted successfully"})

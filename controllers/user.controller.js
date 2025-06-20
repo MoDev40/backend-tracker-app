@@ -7,12 +7,12 @@ const registerUser = async (req, res) => {
         const  { username, email, password } = req.body;
 
         if(!username || !email || !password){
-            res.status(400).json({message: "All fields are required"})
+            return res.status(400).json({message: "All fields are required"})
         }
         
         const user = await User.findOne({email})
         if(user){
-            res.status(400).json({message: "User already exists"})
+            return res.status(400).json({message: "User already exists"})
         }
 
         const hashedPassword = await bcrypt.hash(password, 10)
@@ -55,6 +55,7 @@ const loginUser = async(req, res) => {
         res.status(200).json({message: "Login successful", token, data: user})
         
     } catch (error) {
+        console.log(error)
         res.status(500).json({message: "Internal Server Error"})
     }
 }
@@ -62,7 +63,7 @@ const loginUser = async(req, res) => {
 const getAlUsers = async (req, res) => {
     try {
 
-        const users = await User.find({})
+        const users = await User.find({}).select('-password')
 
         res.status(200).json({ data: users})
         
@@ -77,7 +78,11 @@ const getUser = async (req, res) => {
 
         const { id } = req.params;
 
-        const user = await User.findById(id)
+        const user = await User.findById(id).select('-password')
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
 
         res.status(200).json({ data: user})
         
@@ -92,7 +97,11 @@ const deleteUser = async (req, res) => {
 
         const { id } = req.params;
 
-        await User.findByIdAndDelete(id)
+        const user = await User.findByIdAndDelete(id)
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" })
+        }
 
         res.status(200).json({ message: "User deleted successfully"})
         
@@ -110,7 +119,7 @@ const updateUser = async(req, res) => {
 
         const { username, email, role } = req.body;
 
-        const user = await User.findByIdAndUpdate(id, { username, email, role }, { new: true })
+        const user = await User.findByIdAndUpdate(id, { username, email, role }, { new: true }).select('-password')
 
         if(!user){
             return res.status(404).json({message: "User not found"})
@@ -119,6 +128,7 @@ const updateUser = async(req, res) => {
         res.status(200).json({message: "User updated successfully", data: user})
         
     } catch (error) {
+        console.log(error)
         res.status(500).json({message: "Internal Server Error"})
     }
 }
