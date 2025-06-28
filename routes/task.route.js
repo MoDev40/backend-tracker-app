@@ -1,22 +1,4 @@
 const express = require("express");
-<<<<<<< HEAD
-const verifyToken = require("../middlewares/verifyToken");
-const authorize = require("../middlewares/authorize");
-const { addTaskMiddleware } = require("../middlewares/task.middleware");
-const {
-  addTask,
-  getAllTasks,
-  getTask,
-} = require("../controllers/task.controller");
-
-const router = express.Router();
-
-router.post("/add", verifyToken, authorize("user"), addTaskMiddleware, addTask);
-router.get("/", verifyToken, getAllTasks);
-router.get("/:id", verifyToken, getTask);
-
-module.exports = router;
-=======
 const { 
     createTask, 
     updateTask, 
@@ -50,4 +32,3 @@ router.get("/:id", verifyToken, checkRole(["admin", "user"]), getTaskById);
 router.delete("/:id", verifyToken, checkRole(["admin", "user"]), deleteTask);
 
 module.exports = router; 
->>>>>>> 46c358a8a48fbca4e453ef957635a39998f6cc88
