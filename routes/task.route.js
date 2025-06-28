@@ -8,7 +8,8 @@ const {
     getTasksByProject,
     assignTask,
     assignMultipleTasks,
-    getTasksByUser
+    getTasksByUser,
+    getTaskStats
 } = require("../controllers/task.controller");
 
 const verifyToken = require("../middlewares/verifyToken");
@@ -17,10 +18,9 @@ const { validateCreateTask, validateUpdateTask, validateAssignTask, validateAssi
 
 const router = express.Router();
 
-
-
 // Task routes
 router.post("/", verifyToken, checkRole(["admin", "user"]), validateCreateTask, createTask);
+router.get("/stats", verifyToken, checkRole(["admin", "user"]), getTaskStats);
 router.get("/", verifyToken, checkRole(["admin", "user"]), getTasks);
 router.post("/assign-multiple", verifyToken, checkRole(["admin", "user"]), validateAssignMultipleTasks, assignMultipleTasks);
 router.get("/user/:userId", verifyToken, checkRole(["admin", "user"]), getTasksByUser);
@@ -30,6 +30,5 @@ router.patch("/:id/assign", verifyToken, checkRole(["admin", "user"]), validateA
 router.patch("/:id", verifyToken, checkRole(["admin", "user"]), validateUpdateTask, updateTask);
 router.get("/:id", verifyToken, checkRole(["admin", "user"]), getTaskById);
 router.delete("/:id", verifyToken, checkRole(["admin", "user"]), deleteTask);
-
 
 module.exports = router; 

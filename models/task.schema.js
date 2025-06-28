@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-
+const mongoosePaginate = require('mongoose-paginate-v2');
+const mongooseAggregate = require('mongoose-aggregate-paginate-v2');
 // title, description, status, priority, dueDate, assignedTo, createdBy, project
 // status: pending, completed, in_progress
 // priority: low, medium, high
@@ -54,6 +55,9 @@ const taskSchema = new mongoose.Schema({
 }, {
     timestamps: true
 });
+
+taskSchema.plugin(mongoosePaginate);
+taskSchema.plugin(mongooseAggregate);
 
 const Task = mongoose.model("Task", taskSchema);
 

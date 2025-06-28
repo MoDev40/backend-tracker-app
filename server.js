@@ -3,11 +3,16 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/user.route");
 const projectRoutes = require("./routes/project.route");
 const taskRoutes = require("./routes/task.route");
+const cors = require("cors");
 
 const PORT = process.env.PORT || 8000;
 const app = express();
 
 app.use(express.json());
+
+app.use(cors({
+    origin: "*"
+}))
 
 // Routes
 app.use("/api/users", userRoutes)
