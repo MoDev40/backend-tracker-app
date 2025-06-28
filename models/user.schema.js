@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const { type } = require("os");
+const mongoosePaginate = require('mongoose-paginate-v2');
+const mongooseAggregate = require('mongoose-aggregate-paginate-v2');
 
 const userSchema = new mongoose.Schema({
     username: {
@@ -13,7 +14,10 @@ const userSchema = new mongoose.Schema({
         unique:true,
         
     },
-    password: String,
+    password: {
+        type:String,
+        required:true
+    },
     role: {
         type:String,
         enum:["user", "admin"],
@@ -21,6 +25,8 @@ const userSchema = new mongoose.Schema({
     }
 })
 
+userSchema.plugin(mongoosePaginate);
+userSchema.plugin(mongooseAggregate);
 
 const User = mongoose.model("User", userSchema);
 
